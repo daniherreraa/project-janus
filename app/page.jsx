@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import janusItems from "../public/imgs/janus-items.svg"
 import janusIcon from "../public/jans.svg"
 
@@ -25,7 +26,7 @@ export default function Home() {
             </div>
             <div id="navLinksContainer" className="flex flex-row text-white font-technor ml-6 gap-3">
               {['Janus-core', 'Morpheus', 'Gaia'].map((w, i) => (
-                <p className="font-technor font-semibold px-3 hover:bg-white/50 cursor-pointer" key={i}>{w}</p>
+                <Link href={`/${w.toLowerCase()}`} className="font-technor font-semibold px-3 hover:bg-white/50 cursor-pointer" key={i}>{w}</Link>
               ))}
             </div>
           </nav>
