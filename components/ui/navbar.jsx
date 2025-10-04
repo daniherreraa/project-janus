@@ -6,7 +6,9 @@ export const NavBar = () => {
   return (
     <nav className="absolute flex flex-row w-full h-fit items-center p-6">
       <div id="brandContainer">
-        <Image src={janusIcon} className="w-8 h-auto" alt="Janus Icon" />
+        <Link href={'/'}>
+          <Image src={janusIcon} className="w-8 h-auto" alt="Janus Icon" />
+        </Link>
       </div>
       <div
         id="navLinksContainer"
