@@ -1,7 +1,7 @@
 import Image from "next/image";
-import Link from "next/link";
 import janusItems from "../public/imgs/janus-items.svg"
-import janusIcon from "../public/jans.svg"
+import { NavBar } from "@/components/ui/navbar";
+
 
 export default function Home() {
   return (
@@ -16,20 +16,7 @@ export default function Home() {
           priority
         />
         <div className="relative z-10 flex w-full h-full">
-          <nav className="flex flex-row w-full h-fit items-center p-6">
-            <div id="brandContainer">
-              <Image
-                src={janusIcon}
-                className="w-8 h-auto"
-                alt="Janus Icon"
-              />
-            </div>
-            <div id="navLinksContainer" className="flex flex-row text-white font-technor ml-6 gap-3">
-              {['Janus-core', 'Morpheus', 'Gaia'].map((w, i) => (
-                <Link href={`/${w.toLowerCase()}`} className="font-technor font-semibold px-3 hover:bg-white/50 cursor-pointer" key={i}>{w}</Link>
-              ))}
-            </div>
-          </nav>
+          <NavBar />
           <div id="heroTitlesContainer" className="w-fit flex flex-col text-white shrink-0 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
             <div className="flex flex-row items-center gap-x-2">
               <div className="font-technor font-semibold text-[4rem] leading-0">PROJECT</div>
