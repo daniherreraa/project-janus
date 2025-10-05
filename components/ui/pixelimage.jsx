@@ -85,22 +85,15 @@ export default function PixelImage({ src, alt }) {
           if (hasAnimatedRef.current) return;
           hasAnimatedRef.current = true;
 
-          // 🎨 TAMAÑO DE PÍXELES (más valores = más smooth)
-          // Valores más bajos = píxeles más grandes
-          // Más pasos entre números = transición más suave
-          const factors = [1, 2, 3, 5, 8, 12, 20, 35, 60, 100];
+          // 🎨 6 PASOS - Píxeles MÁS GRANDES al inicio
+          // 0.5 = MEGA pixelado, 100 = imagen nítida
+          const factors = [0.5, 2, 10, 40, 50, 100];
 
           let i = 0;
           const animate = () => {
             if (i < factors.length) {
               render(factors[i++]);
-
-              // ⏱️ VELOCIDAD DE ANIMACIÓN (en milisegundos)
-              // Número más alto = más lento/smooth
-              setTimeout(animate, 80); // Todas las transiciones a 100ms
-
-              // O usa diferentes velocidades:
-              // setTimeout(animate, i === 1 ? 200 : 100);
+              setTimeout(animate, 150);
             }
           };
           animate();

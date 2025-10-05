@@ -1,85 +1,63 @@
 "use client";
 
-import { useState } from "react";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
-export const MorpheusCard = ({ risk }) => {
-  if (!risk) return null;
+export const MorpheusCard = ({ item, type }) => {
+  const getBadgeStyle = (level) => {
+    switch (level) {
+      case "high":
+        return "border-red-500/60 text-red-200 bg-red-500/30";
+      case "medium":
+        return "border-yellow-400/60 text-yellow-200 bg-yellow-400/10";
+      case "low":
+        return "border-green-400/60 text-green-200 bg-green-400/10";
+      default:
+        return "border-white/40 text-white/70 bg-white/10";
+    }
+  };
 
-  const [expanded, setExpanded] = useState(false);
+  const shortText = (text, limit = 160) =>
+    text?.length > limit ? text.slice(0, limit) + "..." : text;
 
-  const {
-    category,
-    risk_level,
-    mechanism,
-    observed_effects,
-    countermeasures = [],
-  } = risk;
+  let previewText = "";
+  if (type === "risk") previewText = item.mechanism || "";
+  else if (type === "plant") previewText = item.impact || "";
+  else if (type === "research") previewText = item;
 
-  const levelColor = {
-    high: "bg-red-500/40 text-red-300 border-red-500/40",
-    medium: "bg-yellow-500/30 text-yellow-200 border-yellow-500/30",
-    low: "bg-green-500/30 text-green-200 border-green-500/30",
-  }[risk_level] || "bg-gray-500/30 text-gray-200 border-gray-500/30";
+  const title = item.category || "Research Topic";
+  const badge = getBadgeStyle(item?.risk_level);
 
   return (
-    <div
-      onClick={() => setExpanded(!expanded)}
-      className={`
-        relative cursor-pointer w-full h-fit
-        bg-white/5 border border-white/20 backdrop-blur-xl rounded-xl p-4
-        transition-all duration-300
-        hover:border-white/40 hover:scale-[1.01]
-      `}
+    <Card
+      className={`h-fit bg-white/10 border border-white/30 hover:border-white/50 
+       backdrop-blur-[150px] rounded-lg overflow-hidden p-3 transition-all hover:scale-[1.02] cursor-pointer`}
     >
-      <div className="mb-2 flex flex-col gap-1">
+      <CardHeader className="p-0">
         <div className="flex items-center justify-between">
-          <h3 className="font-technor text-lg text-white tracking-wide">
-            {category}
-          </h3>
-          <span
-            className={`px-2 py-0.5 text-xs font-supreme uppercase tracking-wide border rounded-md ${levelColor}`}
-          >
-            {risk_level}
-          </span>
-        </div>
-        <p className="font-supreme text-sm text-white/70 ">
-          {mechanism}
-        </p>
-      </div>
+          <CardTitle className="font-technor font-semibold text-white text-base">
+            {title}
+          </CardTitle>
 
-      {/* Contenido expandible */}
-      <div
-        className={`transition-all duration-500 ease-in-out overflow-hidden ${
-          expanded ? "max-h-[1000px] opacity-100 mt-2" : "max-h-0 opacity-0"
-        }`}
-      >
-        <div>
-          <p className="text-sm text-white/90 leading-relaxed font-supreme">
-            {observed_effects}
-          </p>
-
-          {countermeasures.length > 0 && (
-            <ul className="mt-3 space-y-1 text-xs text-white/80 font-supreme list-disc list-inside">
-              {countermeasures.map((item, i) => (
-                <li key={i}>{item}</li>
-              ))}
-            </ul>
+          {type === "risk" && (
+            <div
+              className={`px-2 py-[2px] text-[10px] font-technor uppercase tracking-wide 
+              border rounded-full ${badge}`}
+            >
+              {item.risk_level}
+            </div>
           )}
         </div>
-      </div>
+      </CardHeader>
 
-      <div className="mt-3 flex justify-end text-white/60 text-xs font-supreme">
-        {expanded ? (
-          <div className="flex items-center gap-1">
-            <ChevronUp size={14} /> Hide details
-          </div>
-        ) : (
-          <div className="flex items-center gap-1">
-            <ChevronDown size={14} /> Show details
-          </div>
-        )}
-      </div>
-    </div>
+      <CardContent className="p-0 -mt-2 font-supreme text-white/80 text-sm leading-relaxed">
+        <p>{shortText(previewText)}</p>
+      </CardContent>
+    </Card>
   );
 };

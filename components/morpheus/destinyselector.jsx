@@ -33,9 +33,9 @@ export function DestinySelector({ value, onChange }) {
           role="combobox"
           aria-expanded={open}
           className="w-fit h-fit justify-between ps-0 pe-0
-            font-technor font-semibold text-8xl text-white hover:text-white
+            font-technor font-semibold text-6xl hover:text-7xl text-white hover:text-white
             border-0 shadow-none rounded-none 
-            bg-0 hover:bg-white/10"
+            bg-0 hover:bg-white/10 transition-all"
         >
           {destinations.find((d) => d.value === value)?.label}
           <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
