@@ -43,7 +43,7 @@ export const MorpheusCard = ({ risk }) => {
             {risk_level}
           </span>
         </div>
-        <p className="font-supreme text-sm text-white/70 line-clamp-2">
+        <p className="font-supreme text-sm text-white/70 ">
           {mechanism}
         </p>
       </div>
