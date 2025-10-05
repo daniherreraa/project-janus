@@ -46,7 +46,6 @@ export default function MorpheusPage() {
   }, []);
 
   // background transitions
-  // background transitions
   useEffect(() => {
     if (!previousDestination) return;
     const container = containerRef.current;
@@ -111,15 +110,23 @@ export default function MorpheusPage() {
           id={`${key}-container`}
           className="columns-1 sm:columns-2 lg:columns-3 gap-3 [column-fill:_balance] w-full"
         >
-          {visibleItems.map((item, i) => (
-            <div
-              key={i}
-              className="break-inside-avoid mb-4 cursor-pointer"
-              onClick={() => setSelectedItem({ ...item, type })}
-            >
-              <MorpheusCard item={item} type={type} />
-            </div>
-          ))}
+          {visibleItems.map((item, i) => {
+            const isResearch = type === "research";
+
+            return (
+              <div
+                key={i}
+                className="break-inside-avoid mb-4 cursor-pointer hover:scale-[1.02] transition-transform"
+                onClick={
+                  !isResearch
+                    ? () => setSelectedItem({ ...item, type })
+                    : undefined
+                }
+              >
+                <MorpheusCard item={item} type={type} />
+              </div>
+            );
+          })}
         </div>
       </section>
     );
@@ -139,7 +146,10 @@ export default function MorpheusPage() {
   };
 
   return (
-    <div ref={containerRef} className="relative w-svw h-svh overflow-hidden">
+    <div
+      ref={containerRef}
+      className="relative w-svw h-svh overflow-hidden bg-black"
+    >
       {/* Background */}
       <div className="absolute inset-0">
         <div
@@ -174,11 +184,11 @@ export default function MorpheusPage() {
             <div className="flex flex-row items-center justify-between lg:flex-col lg:items-stretch">
               <div
                 id="selectorPlanetContainer"
-                className="w-fit h-20 flex flex-row justify-start items-center bg-white/10 border border-white/30 rounded-lg backdrop-blur-[10px]"
+                className="w-fit h-20 lg:w-full lg:h-fit lg:pb-4 flex flex-row lg:flex-col justify-start items-center bg-white/10 border border-white/30 rounded-lg backdrop-blur-[10px]"
               >
                 <div
                   id="planetModelContainer"
-                  className="h-16 md:h-64 flex items-center justify-center overflow-hidden"
+                  className="h-16 md:h-20 lg:w-full lg:h-64 flex items-center justify-center overflow-hidden"
                 >
                   <MiniPlanet
                     planet={destination === "moon" ? "moon" : "mars"}
@@ -191,7 +201,7 @@ export default function MorpheusPage() {
                     onChange={setDestination}
                     small
                   />
-                  <p className="text-white/60 text-sm -mt-3 lg:-mt-1 font-supreme tracking-wide">
+                  <p className="text-white/60 text-sm -mt-3 lg:-mt-2 font-supreme tracking-wide">
                     Destination
                   </p>
                 </div>
