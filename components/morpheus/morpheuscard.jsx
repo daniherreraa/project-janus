@@ -3,12 +3,11 @@
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 
-export const MorpheusCard = ({ item, type }) => {
+export const MorpheusCard = ({ item, type, compact = false }) => {
   const getBadgeStyle = (level) => {
     switch (level) {
       case "high":
@@ -35,12 +34,18 @@ export const MorpheusCard = ({ item, type }) => {
 
   return (
     <Card
-      className={`h-fit bg-white/10 border border-white/30 hover:border-white/50 
-       backdrop-blur-[150px] rounded-lg overflow-hidden p-3 transition-all hover:scale-[1.02] cursor-pointer`}
+      className={`${
+        compact ? "h-44" : "h-fit"
+      } bg-white/10 border border-white/30 hover:border-white/50 
+      backdrop-blur-[150px] rounded-lg overflow-hidden p-3 transition-all hover:scale-[1.02] cursor-pointer`}
     >
-      <CardHeader className="p-0">
+      <CardHeader className="p-0 mb-1">
         <div className="flex items-center justify-between">
-          <CardTitle className="font-technor font-semibold text-white text-base">
+          <CardTitle
+            className={`font-technor font-semibold text-white ${
+              compact ? "text-sm" : "text-base"
+            }`}
+          >
             {title}
           </CardTitle>
 
@@ -55,8 +60,12 @@ export const MorpheusCard = ({ item, type }) => {
         </div>
       </CardHeader>
 
-      <CardContent className="p-0 -mt-2 font-supreme text-white/80 text-sm leading-relaxed">
-        <p>{shortText(previewText)}</p>
+      <CardContent
+        className={`p-0 font-supreme text-white/80 leading-relaxed ${
+          compact ? "text-xs line-clamp-2" : "text-sm"
+        }`}
+      >
+        <p>{shortText(previewText, compact ? 80 : 160)}</p>
       </CardContent>
     </Card>
   );

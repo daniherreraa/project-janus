@@ -32,8 +32,8 @@ export function DestinySelector({ value, onChange }) {
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-fit h-fit justify-between ps-0 pe-0
-            font-technor font-semibold text-6xl hover:text-7xl text-white hover:text-white
+          className="relative w-fit h-fit justify-between ps-0
+            font-technor font-semibold text-lg hover:text-xl lg:text-6xl lg:hover:text-7xl text-white hover:text-white
             border-0 shadow-none rounded-none 
             bg-0 hover:bg-white/10 transition-all"
         >
@@ -41,7 +41,7 @@ export function DestinySelector({ value, onChange }) {
           <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="p-0 border-0 bg-transparent rounded-none shadow-none font-technor font-semibold">
+      <PopoverContent className="ml-6 p-0 border border-white/40 bg-transparent backdrop-blur-[30px] rounded-none shadow-none font-technor font-semibold">
         <Command className="bg-white/20 rounded-none shadow-none">
           <CommandList>
             <CommandEmpty>No destination found.</CommandEmpty>
@@ -53,7 +53,7 @@ export function DestinySelector({ value, onChange }) {
                     onChange(destination.value);
                     setOpen(false);
                   }}
-                  className="text-white p-0 rounded-none data-[selected=true]:bg-white/30 data-[selected=true]:text-white"
+                  className="text-white p-0 rounded-none data-[selected=true]:bg-white/40 data-[selected=true]:text-white"
                 >
                   <CheckIcon
                     className={cn(

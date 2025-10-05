@@ -1,36 +1,62 @@
 "use client";
 
+import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export function MorpheusTabs({ data, renderSection }) {
-  const tabTriggerBase =
-    "px-3 m-0 rounded-none leading-0 font-technor font-semibold text-white/80 text-sm uppercase tracking-wide " +
-    "border-x border-white/40 border-y-0 " +
-    "data-[state=active]:text-white data-[state=active]:bg-white/40 backdrop-blur-2xl";
+  const [activeTab, setActiveTab] = useState("human_risks");
+
+  const tabBase =
+    "truncate transition-all duration-300 text-xs sm:text-sm uppercase font-technor font-semibold tracking-wide text-white/70 " +
+    "data-[state=active]:text-white data-[state=active]:bg-white/20 " +
+    "hover:text-white border border-transparent data-[state=active]:border-white/40 " +
+    "rounded-md backdrop-blur-md";
+
+  // Configura el ancho dinámico
+  const getWidthClass = (tab) => {
+    if (activeTab === tab) return "flex-[2] sm:flex-[1.5] px-3 sm:px-5"; // la activa se expande
+    return "flex-1 px-2 sm:px-3"; // las demás más compactas
+  };
 
   return (
-    <Tabs defaultValue="human_risks" className="w-full">
-      {/* Tab headers */}
-      <TabsList className="flex justify-start space-x-3 mb-6 border-b border-white/20 bg-transparent rounded-none">
-        <TabsTrigger value="human_risks" className={tabTriggerBase}>
+    <Tabs
+      defaultValue="human_risks"
+      value={activeTab}
+      onValueChange={setActiveTab}
+      className="w-full"
+    >
+      {/* Tabs header */}
+      <TabsList
+        className="flex w-full justify-between items-center gap-2 sm:gap-3 mb-6 bg-white/5 backdrop-blur-xl p-1 rounded-lg border border-white/20"
+      >
+        <TabsTrigger
+          value="human_risks"
+          className={`${tabBase} ${getWidthClass("human_risks")}`}
+        >
           Human Risks
         </TabsTrigger>
 
-        <TabsTrigger value="plants" className={tabTriggerBase}>
+        <TabsTrigger
+          value="plants"
+          className={`${tabBase} ${getWidthClass("plants")}`}
+        >
           Plants & Microbes
         </TabsTrigger>
 
-        <TabsTrigger value="research" className={tabTriggerBase}>
-          Research Opportunities
+        <TabsTrigger
+          value="research"
+          className={`${tabBase} ${getWidthClass("research")}`}
+        >
+          Research
         </TabsTrigger>
       </TabsList>
 
-      {/* Tab contents */}
-      <TabsContent value="human_risks" className="mt-4">
+      {/* Tabs content */}
+      <TabsContent value="human_risks">
         {renderSection("Human Risks", data?.human_risks, "human_risks", "risk")}
       </TabsContent>
 
-      <TabsContent value="plants" className="mt-4">
+      <TabsContent value="plants">
         {renderSection(
           "Plants and Microbes",
           data?.plant_and_microbe_factors,
@@ -39,7 +65,7 @@ export function MorpheusTabs({ data, renderSection }) {
         )}
       </TabsContent>
 
-      <TabsContent value="research" className="mt-4">
+      <TabsContent value="research">
         {renderSection(
           "Research Opportunities",
           data?.research_opportunities,
