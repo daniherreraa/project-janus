@@ -97,7 +97,7 @@ export default function PixelImage({ src, alt }) {
 
               // ⏱️ VELOCIDAD DE ANIMACIÓN (en milisegundos)
               // Número más alto = más lento/smooth
-              setTimeout(animate, 100); // Todas las transiciones a 100ms
+              setTimeout(animate, 80); // Todas las transiciones a 100ms
 
               // O usa diferentes velocidades:
               // setTimeout(animate, i === 1 ? 200 : 100);
