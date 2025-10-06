@@ -259,7 +259,7 @@ const Page = () => {
   const holoRef = useRef(null);
 
   const buildApiUrl = () => {
-    const baseUrl = 'https://s9qw26hg-8000.use2.devtunnels.ms/studies';
+    const baseUrl = 'https://hackathonnasa-2025-2.onrender.com/studies';
     const params = new URLSearchParams();
 
     // Add organism filter if selected
@@ -775,12 +775,20 @@ const Page = () => {
                                               <div className="aspect-video rounded-md bg-white/10 border border-white/10 overflow-hidden relative">
                                                 {article.organism && (
                                                   <img 
-                                                    src={`/imgs/${article.organism.toLowerCase().replace(/\s+/g, '_')}.webp`} 
+                                                    src={`/imgs/${
+                                                      article.organism.toLowerCase().includes('human') || article.organism.toLowerCase().includes('homo')
+                                                        ? 'human'
+                                                        : article.organism.toLowerCase().replace(/\s+/g, '_')
+                                                    }.webp`} 
                                                     alt={article.organism}
                                                     className="absolute inset-0 w-full h-full object-contain opacity-40 p-1"
                                                     onError={(e) => {
+                                                      // Special case for human
+                                                      if (article.organism.toLowerCase().includes('human') || article.organism.toLowerCase().includes('homo')) {
+                                                        e.target.src = '/imgs/human.webp';
+                                                      }
                                                       // Fallback to cellular_fungus for bacteria, fungus, cellular
-                                                      if (['bacteria', 'fungus', 'cellular'].includes(article.organism.toLowerCase())) {
+                                                      else if (['bacteria', 'fungus', 'cellular'].includes(article.organism.toLowerCase())) {
                                                         e.target.src = '/imgs/cellular_fungus.webp';
                                                       } else {
                                                         e.target.style.display = 'none';
