@@ -82,10 +82,10 @@ export default async function Home() {
               The Space Biology <br /> Knowledge Engine for everyone
             </h1>
             <p className="font-supreme mt-12 lg:max-w-[45rem]">
-              The Project Janus is designed to help you learn all you need to
-              know about biological experiment in space, and all the challenge
-              that nasa have to deal with, when we want to plan missions to
-              space.
+              Project JANUS is designed to help you explore and understand
+              everything about biological experiments conducted in space — and
+              the complex challenges NASA faces when planning and supporting
+              life beyond Earth.
             </p>
           </div>
         </section>
@@ -103,13 +103,13 @@ export default async function Home() {
               />
             </div>
             <div className="hover-target">
-               <HoverCard
-              title="Morpheus"
-              description="Explore risk factors, plant behavior, and space biology through our immersive lab."
-              imageBW="https://exnfgivtduajcmskhmrl.supabase.co/storage/v1/object/public/janus-ship/morpheus-moon-bw.png"
-              imageColor="https://exnfgivtduajcmskhmrl.supabase.co/storage/v1/object/public/janus-ship/morpheus-moon.png"
-              href="/morpheus"
-            />
+              <HoverCard
+                title="Morpheus"
+                description="Explore risk factors, plant behavior, and space biology through our immersive lab."
+                imageBW="https://exnfgivtduajcmskhmrl.supabase.co/storage/v1/object/public/janus-ship/morpheus-moon-bw.png"
+                imageColor="https://exnfgivtduajcmskhmrl.supabase.co/storage/v1/object/public/janus-ship/morpheus-moon.png"
+                href="/morpheus"
+              />
             </div>
           </div>
         </section>
