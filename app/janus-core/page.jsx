@@ -278,7 +278,7 @@ const Page = () => {
 
     // Add keywords if provided
     if (query) {
-      params.append('keywords', query);
+      params.append('q', query);
     }
 
     // Add search operator (AND/OR)
