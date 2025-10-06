@@ -156,7 +156,7 @@ export const HoverCard = ({ title, description, imageColor, imageBW, href }) => 
     <a
       href={href}
       ref={cardRef}
-      className="group relative overflow-hidden bg-white/5 backdrop-blur-md cursor-pointer border-white/20 hover:border-white/30 transition-transform duration-500"
+      className="grouprelative overflow-hidden bg-white/5 backdrop-blur-md cursor-pointer border-white/20 hover:border-white/30 transition-transform duration-500"
     >
       {/* Canvas dinámico pixelado */}
       <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" />

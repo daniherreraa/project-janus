@@ -1,5 +1,6 @@
 import localFont from 'next/font/local'
 import "./globals.css";
+import CustomCursor from "@/components/ui/customcursor";
 
 export const metadata = {
   title: "Project Janus",
@@ -34,6 +35,7 @@ export default function RootLayout({ children }) {
       <body
         className={`${technor.variable} ${supreme.variable} antialiased`}
       >
+        <CustomCursor />
         {children}
       </body>
     </html>

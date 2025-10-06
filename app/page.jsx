@@ -93,20 +93,24 @@ export default async function Home() {
         {/* Secciones futuras del landing… */}
         <section className="relative h-fit w-full px-4 lg:px-14 py-6 lg:py-10 border-b border-white/30">
           <div className="grid grid-cols-1 md:grid-cols-2 h-[60svh]">
-            <HoverCard
-              title="Janus – Core"
-              description="Access datasets, experiments and biological insights that fuel your research."
-              imageBW="https://exnfgivtduajcmskhmrl.supabase.co/storage/v1/object/public/janus-ship/janus-core-bw.png"
-              imageColor="https://exnfgivtduajcmskhmrl.supabase.co/storage/v1/object/public/janus-ship/janus-core.png"
-              href="/janus-core"
-            />
-            <HoverCard
+            <div className="hover-target">
+              <HoverCard
+                title="Janus – Core"
+                description="Access datasets, experiments and biological insights that fuel your research."
+                imageBW="https://exnfgivtduajcmskhmrl.supabase.co/storage/v1/object/public/janus-ship/janus-core-bw.png"
+                imageColor="https://exnfgivtduajcmskhmrl.supabase.co/storage/v1/object/public/janus-ship/janus-core.png"
+                href="/janus-core"
+              />
+            </div>
+            <div className="hover-target">
+               <HoverCard
               title="Morpheus"
               description="Explore risk factors, plant behavior, and space biology through our immersive lab."
               imageBW="https://exnfgivtduajcmskhmrl.supabase.co/storage/v1/object/public/janus-ship/morpheus-moon-bw.png"
               imageColor="https://exnfgivtduajcmskhmrl.supabase.co/storage/v1/object/public/janus-ship/morpheus-moon.png"
               href="/morpheus"
             />
+            </div>
           </div>
         </section>
 

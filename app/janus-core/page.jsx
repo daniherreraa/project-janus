@@ -771,9 +771,24 @@ const Page = () => {
                                         <div className="relative rounded-lg border border-white/10 bg-white/5 backdrop-blur-sm p-3 sm:p-4 transition-all duration-300 hover:bg-white/10 hover:border-white/20">
                                           <div className="flex flex-col sm:flex-row gap-3">
                                             {/* Left side - Thumbnail */}
-                                            <div className="w-full sm:w-1/4 font-technor">
-                                              <div className="aspect-video rounded-md bg-white/10 border border-white/10 overflow-hidden">
-                                                <div className="w-full h-full flex flex-col items-center justify-center p-2 text-center">
+                                            <div className="w-full sm:w-1/3 font-technor">
+                                              <div className="aspect-video rounded-md bg-white/10 border border-white/10 overflow-hidden relative">
+                                                {article.organism && (
+                                                  <img 
+                                                    src={`/imgs/${article.organism.toLowerCase().replace(/\s+/g, '_')}.webp`} 
+                                                    alt={article.organism}
+                                                    className="absolute inset-0 w-full h-full object-contain opacity-40 p-1"
+                                                    onError={(e) => {
+                                                      // Fallback to cellular_fungus for bacteria, fungus, cellular
+                                                      if (['bacteria', 'fungus', 'cellular'].includes(article.organism.toLowerCase())) {
+                                                        e.target.src = '/imgs/cellular_fungus.png';
+                                                      } else {
+                                                        e.target.style.display = 'none';
+                                                      }
+                                                    }}
+                                                  />
+                                                )}
+                                                <div className="relative z-10 w-full h-full flex flex-col items-center justify-center p-2 text-center">
                                                   <span className="text-xs font-medium text-white/80 mb-1">
                                                     {article.organism || 'Study'}
                                                   </span>
