@@ -208,7 +208,7 @@ export default function MorpheusPage() {
         {/* Contenedor adaptable */}
         <div className="pt-20 px-4 md:px-6 w-full h-full flex flex-col lg:flex-row overflow-hidden gap-6">
           {/* Sidebar */}
-          <aside className="w-full lg:w-[15%] flex-shrink-0 lg:h-full lg:pr-6 flex flex-col justify-start lg:justify-between border-b lg:border-b-0 lg:border-r border-white/30 pb-4 lg:pb-0">
+          <aside className="w-full lg:w-[clamp(220px,20vw,320px)] flex-shrink-0 lg:h-full lg:pr-6 flex flex-col justify-start lg:justify-between border-b lg:border-b-0 lg:border-r border-white/30 pb-4 lg:pb-0">
             <div className="flex flex-row items-center justify-between lg:flex-col lg:items-stretch">
               <div
                 id="selectorPlanetContainer"
@@ -216,7 +216,7 @@ export default function MorpheusPage() {
               >
                 <div
                   id="planetModelContainer"
-                  className="w-16 h-16 md:h-20 lg:w-full lg:h-64 flex items-center justify-center overflow-hidden"
+                  className="w-16 h-16 md:h-20 md:w-full lg:w-full lg:h-64 flex items-center justify-center overflow-hidden"
                 >
                   <MiniPlanet
                     planet={destination === "moon" ? "moon" : "mars"}

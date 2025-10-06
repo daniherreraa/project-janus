@@ -16,7 +16,7 @@ export const NavBar = () => {
 
   return (
     <nav
-      className="fixed top-0 left-0 w-full z-30 border-b border-white/25 
+      className="fixed top-0 left-0 w-full z-50 border-b border-white/25 
                  bg-white/5  text-white
                  flex items-center justify-between px-6 py-4"
     >
