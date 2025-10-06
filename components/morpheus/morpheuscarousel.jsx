@@ -40,11 +40,13 @@ export const MorpheusCarousel = ({ items = [], onSelect }) => {
     <div className="relative w-full">
       {/* encabezado tipo tabs */}
       <div className="flex items-center justify-between mb-3 px-2">
+
         <h3 className="font-technor font-semibold text-base sm:text-lg text-white/90 bg-white/10 border border-white/20 backdrop-blur-md rounded-md px-3 py-1">
           More {title}
         </h3>
         {hasOverflow && (
           <div className="flex gap-2">
+            {/*button design example */}
             <button
               onClick={() => scroll("left")}
               className="p-2 rounded-md border border-white/20 bg-white/10 hover:bg-white/30 transition backdrop-blur-md"
