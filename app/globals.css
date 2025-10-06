@@ -119,6 +119,23 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-black text-foreground;
   }
 }
+
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;            /* width of the entire scrollbar */
+}
+
+*::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);        /* color of the tracking area */
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.4);    /* color of the scroll thumb */
+  border-radius: 99px;  
+  border: 1px solid rgba(255, 255, 255, 0.5)     /* roundness of the scroll thumb */  /* creates padding around scroll thumb */
+}
+
+
