@@ -77,7 +77,7 @@ export default async function Home() {
         {/* HERO */}
         <section className="relative min-h-fit w-full">
           {/* Títulos con mezcla difference sobre el fondo */}
-          <div className="inset-0 w-full h-full flex flex-col justify-between mix-blend-difference text-white z-10 pt-24 px-4 pb-8 ld:px-20 lg:pt-28 lg:pb-10 border-b border-white/40">
+          <div className="inset-0 w-full h-full flex flex-col justify-between mix-blend-difference text-white z-10 pt-24 px-4 pb-8 lg:px-14 lg:pt-28 lg:pb-10 border-b border-white/40">
             <h1 className="font-technor font-semibold text-4xl lg:text-7xl">
               The Space Biology <br /> Knowledge Engine for everyone
             </h1>
