@@ -781,7 +781,7 @@ const Page = () => {
                                                     onError={(e) => {
                                                       // Fallback to cellular_fungus for bacteria, fungus, cellular
                                                       if (['bacteria', 'fungus', 'cellular'].includes(article.organism.toLowerCase())) {
-                                                        e.target.src = '/imgs/cellular_fungus.png';
+                                                        e.target.src = '/imgs/cellular_fungus.webp';
                                                       } else {
                                                         e.target.style.display = 'none';
                                                       }
