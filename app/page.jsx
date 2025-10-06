@@ -1,19 +1,16 @@
 import Image from "next/image";
-import janusItems from "../public/imgs/janus-items.svg";
-import Link from "next/link";
 import janusIcon from "@/public/jans.svg";
 import PixelImage from "@/components/ui/pixelimage";
 import { getBlurDataURL } from "@/lib/getBlurDataURL";
 import { LandingSidebar } from "@/components/landing/landingsidebar";
 import { HoverCard } from "@/components/landing/hovercard";
 import { SolariBoard } from "@/components/landing/solariborad";
+import { DecisionGraph } from "@/components/landing/decisiongraph";
 
 export default async function Home() {
   const imageUrl =
     "https://exnfgivtduajcmskhmrl.supabase.co/storage/v1/object/public/janus-ship/main.png";
   const blurDataURL = await getBlurDataURL(imageUrl);
-
-  const test = "";
 
   return (
     <div className="relative w-[100svw] h-[100svh] overflow-hidden">
@@ -23,8 +20,53 @@ export default async function Home() {
       </div>
 
       {/* Aside fijo solo en desktop */}
-      <aside className="hidden lg:flex lg:justify-center lg:items-start lg:py-16 fixed left-0 top-0 h-full w-[14rem] z-20 border-r border-white/25">
-        <Image src={janusIcon} className="w-14 h-auto" alt="Janus Icon" />
+      <aside
+        className="hidden lg:flex flex-col justify-between items-center fixed left-0 top-0 h-full w-[14rem] z-20 border-r border-white/40 
+              text-white mix-blend-difference"
+      >
+        {/* Top section: logo + title */}
+        <div className="flex flex-col items-center mt-12 px-4 text-center">
+          <Image
+            src={janusIcon}
+            className="w-14 h-auto mb-3 drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]"
+            alt="Janus Icon"
+          />
+          <h2 className="font-technor font-semibold text-base tracking-widest text-white/80">
+            PROJECT JANUS
+          </h2>
+          <p className="font-supreme text-[0.7rem] text-white/50 mt-1">
+            Space Biology Engine
+          </p>
+
+          <div className="w-8 h-px bg-white/30 mt-6 mb-4" />
+        </div>
+
+        {/* Middle section: nav links */}
+        <nav className="flex flex-col gap-3 text-center font-supreme text-sm tracking-wide">
+          <a
+            href="/"
+            className="text-white/70 hover:text-white transition-all duration-300 hover:translate-x-[2px]"
+          >
+            Home
+          </a>
+          <a
+            href="/janus-core"
+            className="text-white/70 hover:text-white transition-all duration-300 hover:translate-x-[2px]"
+          >
+            Janus-Core
+          </a>
+          <a
+            href="/morpheus"
+            className="text-white/70 hover:text-white transition-all duration-300 hover:translate-x-[2px]"
+          >
+            Morpheus
+          </a>
+        </nav>
+
+        {/* Bottom section: footer */}
+        <div className="px-4 pb-6 text-xs text-white/40 font-supreme tracking-wide text-center">
+          © 2025 Project Janus — Astro UTB
+        </div>
       </aside>
 
       {/* Sidebar (drawer) para md y mobile */}
@@ -35,7 +77,7 @@ export default async function Home() {
         {/* HERO */}
         <section className="relative min-h-fit w-full">
           {/* Títulos con mezcla difference sobre el fondo */}
-          <div className="inset-0 w-full h-full flex flex-col justify-between mix-blend-difference text-white z-10 pt-24 px-4 pb-8 ld:px-20 lg:pt-28 lg:pb-10 border-b border-white">
+          <div className="inset-0 w-full h-full flex flex-col justify-between mix-blend-difference text-white z-10 pt-24 px-4 pb-8 ld:px-20 lg:pt-28 lg:pb-10 border-b border-white/40">
             <h1 className="font-technor font-semibold text-4xl lg:text-7xl">
               The Space Biology <br /> Knowledge Engine for everyone
             </h1>
@@ -85,7 +127,12 @@ export default async function Home() {
           </p>
         </section>
 
-        <section className="relative h-fit w-full flex flex-col px-4 py-6 lg:px-14 lg:py-10 border-b border-white/30 mix-blend-difference">
+        <section className="relative h-fit w-full flex flex-col px-4 py-6 lg:px-14 lg:py-10 border-b border-white/30 mix-blend-difference overflow-hidden">
+          {/* Background graph */}
+          <div className="absolute inset-0 -z-10">
+            <DecisionGraph />
+          </div>
+
           <div className="flex flex-col">
             <h4 className="font-technor font-semibold text-white/80">
               From Data To Decisions
@@ -100,6 +147,7 @@ export default async function Home() {
             repositories to reveal patterns across decades of space biology.
           </p>
         </section>
+
         {/* Footer */}
         <footer className="h-[10svh] lg:h-[20svh] flex items-center justify-center text-white font-supreme text-sm tracking-wide border-t border-white/20">
           <p>

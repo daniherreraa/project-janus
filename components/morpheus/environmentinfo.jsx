@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { ChevronDown, Info } from "lucide-react";
+import gsap from "gsap";
 import {
   Dialog,
   DialogContent,
@@ -13,9 +14,37 @@ import {
 export const EnvironmentInfo = ({ environment = {} }) => {
   const [openItem, setOpenItem] = useState(null);
   const [isMobile, setIsMobile] = useState(false);
+  const contentRefs = useRef({});
 
   const toggle = (key) => {
-    setOpenItem(openItem === key ? null : key);
+    const newKey = openItem === key ? null : key;
+    setOpenItem(newKey);
+
+    // Animación suave del colapsable
+    Object.keys(contentRefs.current).forEach((k) => {
+      const el = contentRefs.current[k];
+      if (!el) return;
+
+      if (k === newKey) {
+        gsap.fromTo(
+          el,
+          { height: 0, opacity: 0 },
+          {
+            height: "auto",
+            opacity: 1,
+            duration: 0.4,
+            ease: "power2.out",
+          }
+        );
+      } else {
+        gsap.to(el, {
+          height: 0,
+          opacity: 0,
+          duration: 0.3,
+          ease: "power2.inOut",
+        });
+      }
+    });
   };
 
   const items = [
@@ -36,44 +65,63 @@ export const EnvironmentInfo = ({ environment = {} }) => {
       {items.map(({ key, label }) => (
         <div
           key={key}
-          className="border border-white/20 rounded-lg overflow-hidden bg-white/5 backdrop-blur-md"
+          className={`border border-white/25 rounded-lg overflow-hidden bg-white/10 backdrop-blur-md transition-all duration-300 ${
+            openItem === key ? "border-white/40" : "border-white/20"
+          }`}
         >
           <button
             onClick={() => toggle(key)}
-            className="w-full flex justify-between items-center px-3 py-2 text-left text-white font-technor font-semibold tracking-wide hover:bg-white/10 transition"
+            className="w-full flex justify-between items-center px-3 py-2 text-left 
+                       text-white font-technor font-semibold tracking-wide 
+                       hover:bg-white/15 transition-all duration-300"
           >
             <span>{label}</span>
             <ChevronDown
               size={16}
-              className={`transition-transform ${
-                openItem === key ? "rotate-180" : ""
+              className={`transition-transform duration-500 ${
+                openItem === key
+                  ? "rotate-180 text-white"
+                  : "rotate-0 text-white/70"
               }`}
             />
           </button>
 
-          {openItem === key && (
-            <div className="px-3 pt-3 pb-3 text-white/80 font-supreme text-sm leading-relaxed animate-fade-in">
+          {/* Contenido colapsable animado */}
+          <div
+            ref={(el) => (contentRefs.current[key] = el)}
+            className="overflow-hidden h-0 opacity-0"
+          >
+            <div className="px-3 pt-2 pb-3 text-white/85 font-supreme text-sm leading-relaxed border-t border-white/10">
               {environment[key] ? environment[key] : "No data available."}
             </div>
-          )}
+          </div>
         </div>
       ))}
     </div>
   );
 
-  // 🌍 Desktop/tablet view → collapsibles visibles
+  // 💻 Desktop/tablet → collapsibles visibles directamente
   if (!isMobile) return collapsibles;
 
-  // 📱 Mobile view → solo botón que abre diálogo
+  // 📱 Mobile → botón que abre modal estilizado
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <button className="mt-2 flex items-center gap-2 px-3 py-2 rounded-md border border-white/30 bg-white/10 hover:bg-white/20 text-white font-technor text-sm tracking-wide backdrop-blur-md transition">
-          <Info size={16} />
+        <button
+          className="mt-3 flex items-center justify-center gap-2 px-3 py-2 rounded-md 
+                     border border-white/25 bg-white/10 hover:bg-white/20 
+                     text-white font-technor text-sm tracking-wide 
+                     backdrop-blur-md transition-all duration-300"
+        >
+          <Info size={16} className="text-white/90" />
+          <span>Environment</span>
         </button>
       </DialogTrigger>
 
-      <DialogContent className="bg-black/80 border border-white/20 text-white backdrop-blur-2xl max-w-sm rounded-xl">
+      <DialogContent
+        className="bg-white/[0.08] backdrop-blur-2xl border border-white/25 text-white 
+                   max-w-sm rounded-xl p-4 transition-all duration-300"
+      >
         <DialogHeader>
           <DialogTitle className="font-technor font-semibold text-white text-lg tracking-wide">
             Environment Details

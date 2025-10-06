@@ -1,11 +1,13 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 
 export const SolariBoard = () => {
   const boardRef = useRef(null);
   const lockedIndexes = useRef(new Set());
+  const [dimensions, setDimensions] = useState({ rows: 10, cols: 60 });
+
   const allChars =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890█▓▒░<>[]{}():;=+-*/\\|_•°@#";
   const keywords = [
@@ -21,15 +23,37 @@ export const SolariBoard = () => {
     "NEURAL PLASTICITY",
   ];
 
-  const ROWS = 10;
-  const COLS = 60;
   const FLIP_SPEED = 0.02;
 
-  // ✨ efecto scramble sobre un conjunto de índices
+  // 🔹 Ajuste correcto de filas y columnas para cualquier pantalla
+  useEffect(() => {
+    const resizeHandler = () => {
+      if (!boardRef.current) return;
+
+      const width = boardRef.current.offsetWidth;
+      const height = boardRef.current.offsetHeight || window.innerHeight * 0.3;
+
+      // columnas proporcionales: más densas en pantallas grandes
+      let cols;
+      if (width < 500) cols = 30;
+      else if (width < 900) cols = 45;
+      else if (width < 1400) cols = 60;
+      else if (width < 2000) cols = 80;
+      else cols = 100;
+
+      const rows = Math.max(8, Math.floor(cols / 6));
+      setDimensions({ rows, cols });
+    };
+
+    resizeHandler();
+    window.addEventListener("resize", resizeHandler);
+    return () => window.removeEventListener("resize", resizeHandler);
+  }, []);
+
+  // ✨ efecto scramble
   const scrambleChars = (chars, indexes, targetText, duration = 500) => {
     const steps = Math.floor(duration / 30);
     let current = 0;
-
     const interval = setInterval(() => {
       indexes.forEach((idx, i) => {
         const char = chars[idx];
@@ -41,14 +65,15 @@ export const SolariBoard = () => {
           char.textContent = targetText[i] || " ";
         }
       });
-
       current++;
       if (current >= steps) clearInterval(interval);
     }, 30);
   };
 
+  // 🧠 Inicialización + animaciones
   useEffect(() => {
     const container = boardRef.current;
+    if (!container) return;
     const chars = container.querySelectorAll(".char");
 
     const randomizeBoard = () => {
@@ -61,10 +86,13 @@ export const SolariBoard = () => {
     randomizeBoard();
 
     const showKeyword = () => {
+      const { rows, cols } = dimensions;
       const keyword = keywords[Math.floor(Math.random() * keywords.length)];
-      const startCol = Math.floor(Math.random() * (COLS - keyword.length));
-      const row = Math.floor(Math.random() * ROWS);
-      const startIndex = row * COLS + startCol;
+      if (keyword.length >= cols) return;
+
+      const startCol = Math.floor(Math.random() * (cols - keyword.length));
+      const row = Math.floor(Math.random() * rows);
+      const startIndex = row * cols + startCol;
 
       const locked = [];
       keyword.split("").forEach((_, i) => {
@@ -73,7 +101,6 @@ export const SolariBoard = () => {
         lockedIndexes.current.add(index);
       });
 
-      // Scramble IN (aparición)
       scrambleChars(chars, locked, keyword.split(""), 500);
       locked.forEach((idx) => {
         const char = chars[idx];
@@ -86,9 +113,7 @@ export const SolariBoard = () => {
         );
       });
 
-      // 🔒 Mantener palabra visible 6–8s
       setTimeout(() => {
-        // Scramble OUT (desaparición)
         scrambleChars(chars, locked, locked.map(() => " "), 500);
         locked.forEach((idx) => {
           const char = chars[idx];
@@ -109,7 +134,6 @@ export const SolariBoard = () => {
       }, 6000 + Math.random() * 2000);
     };
 
-    // 🔁 movimiento constante de fondo
     const flipInterval = setInterval(() => {
       const idx = Math.floor(Math.random() * chars.length);
       if (lockedIndexes.current.has(idx)) return;
@@ -126,7 +150,6 @@ export const SolariBoard = () => {
       });
     }, 10);
 
-    // ⚡ varias palabras simultáneas
     const keywordInterval = setInterval(() => {
       const newKeywords = Math.floor(Math.random() * 2) + 1;
       for (let i = 0; i < newKeywords; i++) showKeyword();
@@ -136,14 +159,21 @@ export const SolariBoard = () => {
       clearInterval(flipInterval);
       clearInterval(keywordInterval);
     };
-  }, []);
+  }, [dimensions]);
+
+  const totalChars = dimensions.rows * dimensions.cols;
 
   return (
     <div
       ref={boardRef}
-      className="grid grid-cols-[repeat(60,1fr)] gap-[1px] font-technor text-[1.2rem] md:text-[1.4rem] text-white/25 uppercase tracking-wider w-full mt-10 select-none"
+      className="grid w-full mt-10 gap-[1px] font-technor uppercase text-white/25 tracking-wider select-none"
+      style={{
+        gridTemplateColumns: `repeat(${dimensions.cols}, 1fr)`,
+        fontSize: "clamp(0.75rem, 0.9vw, 1.2rem)",
+        lineHeight: "1",
+      }}
     >
-      {Array.from({ length: ROWS * COLS }).map((_, i) => (
+      {Array.from({ length: totalChars }).map((_, i) => (
         <span
           key={i}
           className="char block text-center font-semibold transition-all duration-100"

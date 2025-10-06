@@ -81,7 +81,7 @@ export const HoverCard = ({ title, description, imageColor, imageBW, href }) => 
       }
     };
 
-    // 🧠 Transición progresiva del pixelado
+    // Transición progresiva del pixelado
     const animatePixelTransition = (fromFactor, toFactor, toColor = false) => {
       const steps = [fromFactor];
       const totalSteps = 6;
@@ -106,7 +106,7 @@ export const HoverCard = ({ title, description, imageColor, imageBW, href }) => 
       animateStep();
     };
 
-    // Estado inicial
+    // Estado inicial (imagen BW pixelada)
     bwImg.current.onload = () => render(bwImg.current, 20, true);
 
     const card = cardRef.current;
@@ -123,19 +123,26 @@ export const HoverCard = ({ title, description, imageColor, imageBW, href }) => 
       animatePixelTransition(100, 20, false);
     };
 
-    // ✅ Responsive: hover en desktop, tap en mobile
-    const isTouch = "ontouchstart" in window || navigator.maxTouchPoints > 0;
+    const isTouch =
+      "ontouchstart" in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
 
     if (isTouch) {
-      let active = false;
-      const handleTap = () => {
-        if (active) handleLeave();
-        else handleEnter();
-        active = !active;
+      // 📱 Móvil: animación automática al cargar
+      const run = () => {
+        scrambleText(titleRef.current);
+        scrambleText(descRef.current);
+        animatePixelTransition(20, 100, true);
       };
-      card.addEventListener("click", handleTap);
-      return () => card.removeEventListener("click", handleTap);
+
+      // ejecuta apenas ambas imágenes estén listas
+      const checkLoaded = setInterval(() => {
+        if (colorImg.current.complete && bwImg.current.complete) {
+          clearInterval(checkLoaded);
+          setTimeout(run, 300); // pequeño delay suave
+        }
+      }, 100);
     } else {
+      // 🖥️ Desktop: hover normal
       card.addEventListener("mouseenter", handleEnter);
       card.addEventListener("mouseleave", handleLeave);
       return () => {

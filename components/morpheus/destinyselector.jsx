@@ -41,7 +41,7 @@ export function DestinySelector({ value, onChange }) {
           <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="ml-6 p-0 border border-white/40 bg-transparent backdrop-blur-[30px] rounded-none shadow-none font-technor font-semibold">
+      <PopoverContent className="p-0 border border-white/40 bg-transparent backdrop-blur-[30px] rounded-none shadow-none font-technor font-semibold">
         <Command className="bg-white/20 rounded-none shadow-none">
           <CommandList>
             <CommandEmpty>No destination found.</CommandEmpty>

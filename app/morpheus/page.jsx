@@ -95,14 +95,55 @@ export default function MorpheusPage() {
             {title}
           </h2>
           {items.length > 5 && (
-            <button
-              className="text-xs font-supreme text-white/70 hover:text-white transition"
-              onClick={() =>
-                setExpandedSection({ ...expandedSection, [key]: !showAll })
-              }
-            >
-              {showAll ? "Show less" : "Show more"}
-            </button>
+            <>
+              {/* Botón superior — siempre visible (desktop y mobile) */}
+              <button
+                className="relative group overflow-hidden text-xs sm:text-sm font-supreme tracking-wide text-white/80 hover:text-white 
+                 px-4 py-2 border border-white/40 hover:border-white/60 rounded-md 
+                 transition-all duration-300 backdrop-blur-md bg-white/5 hover:bg-white/10 
+                 hidden sm:inline-flex"
+                onClick={() =>
+                  setExpandedSection({ ...expandedSection, [key]: !showAll })
+                }
+              >
+                <span className="relative z-10 flex items-center gap-2">
+                  {showAll ? "Show less" : "Show more"}
+                  <span
+                    className={`transition-transform duration-300 ${
+                      showAll ? "rotate-180" : ""
+                    }`}
+                  >
+                    ▼
+                  </span>
+                </span>
+                <span className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              </button>
+
+              {/* Botón inferior — solo visible en mobile */}
+              <div className="flex justify-center mt-6 sm:hidden">
+                <button
+                  className="relative group overflow-hidden text-sm font-supreme tracking-wide text-white/80 hover:text-white 
+                   px-6 py-2 border border-white/40 hover:border-white/60 rounded-md 
+                   transition-all duration-300 backdrop-blur-md bg-white/5 hover:bg-white/10 
+                   shadow-sm shadow-black/20"
+                  onClick={() =>
+                    setExpandedSection({ ...expandedSection, [key]: !showAll })
+                  }
+                >
+                  <span className="relative z-10 flex items-center gap-2">
+                    {showAll ? "Show less" : "Show more"}
+                    <span
+                      className={`transition-transform duration-300 ${
+                        showAll ? "rotate-180" : ""
+                      }`}
+                    >
+                      ▼
+                    </span>
+                  </span>
+                  <span className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                </button>
+              </div>
+            </>
           )}
         </div>
 
@@ -130,19 +171,6 @@ export default function MorpheusPage() {
         </div>
       </section>
     );
-  };
-
-  const getColorByLevel = (level) => {
-    switch (level) {
-      case "high":
-        return "bg-red-500/30 border-red-400/50";
-      case "medium":
-        return "bg-yellow-400/30 border-yellow-300/50";
-      case "low":
-        return "bg-green-400/30 border-green-300/50";
-      default:
-        return "bg-white/10 border-white/20";
-    }
   };
 
   return (
@@ -184,11 +212,11 @@ export default function MorpheusPage() {
             <div className="flex flex-row items-center justify-between lg:flex-col lg:items-stretch">
               <div
                 id="selectorPlanetContainer"
-                className="w-fit h-20 lg:w-full lg:h-fit lg:pb-4 flex flex-row lg:flex-col justify-start items-center bg-white/10 border border-white/30 rounded-lg backdrop-blur-[10px]"
+                className="h-20 lg:w-full lg:h-fit lg:pb-4 flex flex-row p-3 lg:p-0 gap-3 lg:gap-0 lg:flex-col justify-start items-center bg-white/10 border border-white/30 rounded-lg backdrop-blur-[10px]"
               >
                 <div
                   id="planetModelContainer"
-                  className="h-16 md:h-20 lg:w-full lg:h-64 flex items-center justify-center overflow-hidden"
+                  className="w-16 h-16 md:h-20 lg:w-full lg:h-64 flex items-center justify-center overflow-hidden"
                 >
                   <MiniPlanet
                     planet={destination === "moon" ? "moon" : "mars"}
@@ -248,15 +276,14 @@ export default function MorpheusPage() {
                       {selectedItem.type === "plant" && (
                         <>
                           Plant & Microbes:{" "}
-                          <span className="text-[#EA932F]">
+                          <span className="text-white">
                             /{selectedItem.category}
                           </span>
                         </>
                       )}
                       {selectedItem.type === "research" && (
                         <>
-                          Research:{" "}
-                          <span className="text-[#EA932F]">/Focus</span>
+                          Research: <span className="text-white">/Focus</span>
                         </>
                       )}
                     </h2>
