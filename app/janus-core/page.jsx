@@ -259,7 +259,7 @@ const Page = () => {
   const holoRef = useRef(null);
 
   const buildApiUrl = () => {
-    const baseUrl = 'https://hackathonnasa-2025-2.onrender.com/studies';
+    const baseUrl = 'https://janus-api-fjbpc9dqbcbbaqfq.eastus-01.azurewebsites.net/studies';
     const params = new URLSearchParams();
 
     // Add organism filter if selected
