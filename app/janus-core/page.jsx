@@ -81,8 +81,35 @@ function Dropdown({ label, value = '', onChange, options, compact = false, multi
     }
   };
 
+  // Cerrar el dropdown con retraso cuando el mouse sale del área
+  const leaveTimer = useRef(null);
+  
+  const handleMouseLeave = () => {
+    // Limpiar cualquier temporizador existente
+    if (leaveTimer.current) {
+      clearTimeout(leaveTimer.current);
+    }
+    
+    // Establecer un nuevo temporizador para cerrar después de 300ms
+    leaveTimer.current = setTimeout(() => {
+      setOpen(false);
+    }, 300);
+  };
+
+  const handleMouseEnter = () => {
+    // Si el mouse vuelve a entrar, cancelar el temporizador de cierre
+    if (leaveTimer.current) {
+      clearTimeout(leaveTimer.current);
+      leaveTimer.current = null;
+    }
+  };
+
   return (
-    <div className="relative">
+    <div 
+      className="relative" 
+      onMouseLeave={handleMouseLeave}
+      onMouseEnter={handleMouseEnter}
+    >
       <div className={`flex items-center ${compact ? "gap-1" : "gap-1.5 sm:gap-2"}`}>
         <span className={`${compact ? "text-[9px] sm:text-[10px]" : "text-[10px] sm:text-xs md:text-sm"} font-bold text-white/85 whitespace-nowrap`}>
           {label}:
@@ -157,8 +184,8 @@ const Page = () => {
   const [projectType, setProjectType] = useState("");
   const [minimized, setMinimized] = useState(false);
   
-  // Available options for filters
-  const organismOptions = [
+  // State for dynamic filter options
+  const [organismOptions, setOrganismOptions] = useState([
     "Algae",
     "Bacteria",
     "Cellular Organisms",
@@ -174,7 +201,16 @@ const Page = () => {
     "Squid",
     "Squirrel",
     "Worm"
-  ];
+  ]);
+  
+  const [projectTypeOptions, setProjectTypeOptions] = useState([
+    "Spaceflight",
+    "Ground",
+    "Microgravity",
+    "Simulated Microgravity",
+    "Radiation",
+    "Other"
+  ]);
   
   // Handle multiple selections for organism
   const handleOrganismChange = (selected) => {
@@ -206,6 +242,7 @@ const Page = () => {
   const [showFullDesc, setShowFullDesc] = useState(false);
   const [showAllArticles, setShowAllArticles] = useState(false);
   const [showAllSearchResults, setShowAllSearchResults] = useState(false);
+  const [filterSuggestions, setFilterSuggestions] = useState(null);
   const lastSearchRef = useRef({ query: "", organism: "", projectType: "" });
   
   // Calculate visible search results after state is defined - show only 3 articles at a time
@@ -282,7 +319,7 @@ const Page = () => {
     }
 
     // Add search operator (AND/OR)
-    params.append('q_mode', searchOperator.toLowerCase());
+    params.append('smart', searchOperator.toLowerCase());
 
     // Add pagination and other required parameters
     params.append('page', '1');
@@ -292,6 +329,100 @@ const Page = () => {
     params.append('compact', 'false');
 
     return `${baseUrl}?${params.toString()}`;
+  };
+
+  // Analyze search results to generate filter suggestions
+  const analyzeResultsForSuggestions = (items) => {
+    if (!items || items.length === 0) return;
+    
+    const organismCounts = {};
+    const projectTypeCounts = {};
+    const totalItems = items.length;
+    
+    // Count occurrences of each organism and project type
+    items.forEach(item => {
+      if (item.organism) {
+        organismCounts[item.organism] = (organismCounts[item.organism] || 0) + 1;
+      }
+      if (item.project_type) {
+        projectTypeCounts[item.project_type] = (projectTypeCounts[item.project_type] || 0) + 1;
+      }
+    });
+    
+    // Find suggestions with >= 60% occurrence
+    const suggestedOrganisms = Object.entries(organismCounts)
+      .filter(([_, count]) => (count / totalItems) >= 0.6)
+      .map(([org, count]) => ({
+        value: org,
+        percentage: Math.round((count / totalItems) * 100)
+      }));
+      
+    const suggestedProjectTypes = Object.entries(projectTypeCounts)
+      .filter(([_, count]) => (count / totalItems) >= 0.6)
+      .map(([type, count]) => ({
+        value: type,
+        percentage: Math.round((count / totalItems) * 100)
+      }));
+    
+    if (suggestedOrganisms.length > 0 || suggestedProjectTypes.length > 0) {
+      setFilterSuggestions({
+        organisms: suggestedOrganisms,
+        projectTypes: suggestedProjectTypes
+      });
+    } else {
+      setFilterSuggestions(null);
+    }
+  };
+  
+  // Apply suggested filters
+  const applySuggestedFilters = () => {
+    if (!filterSuggestions) return;
+    
+    // Get the top suggestion for each category
+    const topOrganism = filterSuggestions.organisms[0]?.value;
+    const topProjectType = filterSuggestions.projectTypes[0]?.value;
+    
+    // Update the filters
+    if (topOrganism) setOrganism(topOrganism);
+    if (topProjectType) setProjectType(topProjectType);
+    
+    // Clear suggestions after applying
+    setFilterSuggestions(null);
+    
+    // Trigger a new search with the applied filters
+    handleSearch();
+  };
+  
+  // Extract unique values from search results for filters
+  const updateFilterOptions = (items) => {
+    if (!items || !Array.isArray(items)) return;
+    
+    // Extract unique organisms
+    const uniqueOrganisms = [...new Set(items
+      .map(item => item.organism)
+      .filter(Boolean) // Remove null/undefined
+    )];
+    
+    // Extract unique project types
+    const uniqueProjectTypes = [...new Set(items
+      .map(item => item.project_type)
+      .filter(Boolean) // Remove null/undefined
+    )];
+    
+    // Update state with unique values, keeping any existing values
+    if (uniqueOrganisms.length > 0) {
+      setOrganismOptions(prev => {
+        const combined = [...new Set([...prev, ...uniqueOrganisms])];
+        return combined.sort();
+      });
+    }
+    
+    if (uniqueProjectTypes.length > 0) {
+      setProjectTypeOptions(prev => {
+        const combined = [...new Set([...prev, ...uniqueProjectTypes])];
+        return combined.sort();
+      });
+    }
   };
 
   const handleSearch = async () => {
@@ -322,6 +453,18 @@ const Page = () => {
       
       setSearchResults(data);
       setResultsReady(true);
+      
+      // Update filter options based on API response
+      if (data?.articles?.page_items) {
+        updateFilterOptions(data.articles.page_items);
+      }
+      
+      // Analyze results for filter suggestions if no filters are applied
+      if (query && !organism && !projectType && data?.articles?.page_items?.length > 0) {
+        analyzeResultsForSuggestions(data.articles.page_items);
+      } else {
+        setFilterSuggestions(null);
+      }
       
       // If minimized, expand to show results
       if (minimized) {
@@ -640,41 +783,16 @@ const Page = () => {
                       label="Organism" 
                       value={organism} 
                       onChange={handleOrganismChange} 
-                      options={[
-                        "Algae",
-                        "Bacteria",
-                        "Cellular Organisms",
-                        "Fish",
-                        "Fruit Fly",
-                        "Fungus",
-                        "Human (Homo sapiens)",
-                        "Literature",
-                        "Microbiota",
-                        "Plant",
-                        "Rodent",
-                        "Snail",
-                        "Squid",
-                        "Squirrel",
-                        "Worm"
-                      ]} 
+                      options={organismOptions}
                       className="bg-white/5 hover:bg-white/10 border-white/10"
+                      multiple
                     />
                     <Dropdown 
                       compact 
                       label="Project type" 
                       value={projectType} 
                       onChange={setProjectType} 
-                      options={[
-                        "Flight",
-                        "Ground",
-                        "Ground study",
-                        "High Altitude Study",
-                        "Parabolic Flight Study",
-                        "Spaceflight Project",
-                        "Spaceflight Study",
-                        "Suborbital Flight Study",
-                        "pmc"
-                      ]} 
+                      options={projectTypeOptions}
                       className="bg-white/5 hover:bg-white/10 border-white/10"
                       multiple
                     />
@@ -728,6 +846,57 @@ const Page = () => {
                               </span>
                             )}
                           </h3>
+                          
+                          {/* Filter Suggestions Banner */}
+                          {filterSuggestions && searchResults && searchResults.articles?.important?.length > 0 && (
+                            <div className="mb-4 p-3 bg-white/5 backdrop-blur-md border border-white/10 rounded-lg">
+                              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                                <div>
+                                  <h4 className="text-xs font-medium text-white/90 mb-1">Sugerencias de filtros basadas en tus resultados:</h4>
+                                  <div className="flex flex-wrap gap-2 text-xs">
+                                    {filterSuggestions.organisms.length > 0 && (
+                                      <div className="flex items-center gap-1 bg-white/5 px-2 py-1 rounded-md">
+                                        <span className="text-white/70">Organismo:</span>
+                                        <span className="text-[#00C8FF] font-medium">
+                                          {filterSuggestions.organisms.map((org, idx) => (
+                                            <span key={org.value}>
+                                              {org.value} ({org.percentage}%){idx < filterSuggestions.organisms.length - 1 ? ', ' : ''}
+                                            </span>
+                                          ))}
+                                        </span>
+                                      </div>
+                                    )}
+                                    {filterSuggestions.projectTypes.length > 0 && (
+                                      <div className="flex items-center gap-1 bg-white/5 px-2 py-1 rounded-md">
+                                        <span className="text-white/70">Tipo de Proyecto:</span>
+                                        <span className="text-[#00C8FF] font-medium">
+                                          {filterSuggestions.projectTypes.map((type, idx) => (
+                                            <span key={type.value}>
+                                              {type.value} ({type.percentage}%){idx < filterSuggestions.projectTypes.length - 1 ? ', ' : ''}
+                                            </span>
+                                          ))}
+                                        </span>
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                                <div className="flex gap-2 mt-2 sm:mt-0">
+                                  <button
+                                    onClick={applySuggestedFilters}
+                                    className="px-3 py-1 text-xs font-medium bg-[#00C8FF]/10 hover:bg-[#00C8FF]/20 text-[#00C8FF] rounded transition-colors border border-[#00C8FF]/30"
+                                  >
+                                    Aplicar Filtros
+                                  </button>
+                                  <button
+                                    onClick={() => setFilterSuggestions(null)}
+                                    className="px-3 py-1 text-xs font-medium text-white/70 hover:text-white rounded transition-colors"
+                                  >
+                                    Cerrar
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          )}
                           
                           {isLoading ? (
                             <div className="flex justify-center items-center py-8">
@@ -1099,24 +1268,14 @@ const Page = () => {
                 To find new information, you just have to select specific keywords. I'll search in our database for relevant information for your research.
               </p>
             </div>
-            <div className="w-full flex gap-2">
-              <div className="relative flex-1">
-                <input
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  placeholder="Type keywords..."
-                  className="w-full text-sm sm:text-base text-white placeholder-white/50 bg-white/5 border border-white/30 rounded-md px-3 md:px-4 py-2 outline-none focus:ring-2 focus:ring-[var(--accent)] focus:border-transparent"
-                />
-              </div>
-              <div className="relative">
-                <button
-                  type="button"
-                  onClick={() => setSearchOperator(prev => prev === "AND" ? "OR" : "AND")}
-                  className="h-full px-3 md:px-4 py-2 text-sm sm:text-base text-[#00C8FF] font-bold font-technor bg-white/5 border border-white/30 rounded-md hover:bg-white/10 transition-colors whitespace-nowrap"
-                >
-                  {searchOperator}
-                </button>
-              </div>
+            <div className="relative w-full">
+              <input
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                placeholder="Type keywords..."
+                className="w-full text-sm sm:text-base text-white placeholder-white/50 bg-white/5 border border-white/30 rounded-md px-3 md:px-4 py-2 outline-none focus:ring-2 focus:ring-[var(--accent)] focus:border-transparent"
+              />
             </div>
             {/* Buttons and dropdowns - RESPONSIVE WRAP */}
             <div className="w-full flex flex-wrap justify-center items-center gap-2 sm:gap-3 md:gap-4 bg-transparent font-technor">
