@@ -179,7 +179,6 @@ function Dropdown({ label, value = '', onChange, options, compact = false, multi
 
 const Page = () => {
   const [query, setQuery] = useState("");
-  const [searchOperator, setSearchOperator] = useState("AND");
   const [organism, setOrganism] = useState("");
   const [projectType, setProjectType] = useState("");
   const [minimized, setMinimized] = useState(false);
@@ -211,19 +210,7 @@ const Page = () => {
     "Radiation",
     "Other"
   ]);
-  
-  // Handle multiple selections for organism
-  const handleOrganismChange = (selected) => {
-    const currentOrganisms = organism ? organism.split(',').map(o => o.trim()) : [];
-    
-    if (currentOrganisms.includes(selected)) {
-      // Remove if already selected
-      setOrganism(currentOrganisms.filter(o => o !== selected).join(', '));
-    } else {
-      // Add to selection
-      setOrganism([...currentOrganisms, selected].join(', '));
-    }
-  };
+
   const [showCursor, setShowCursor] = useState(false);
   const [showHolo, setShowHolo] = useState(false);
   const [typeKey, setTypeKey] = useState(0);
@@ -318,8 +305,8 @@ const Page = () => {
       params.append('q', query);
     }
 
-    // Add search operator (AND/OR)
-    params.append('smart', searchOperator.toLowerCase());
+    // Add search operator (always smart mode)
+    params.append('smart', 'smart');
 
     // Add pagination and other required parameters
     params.append('page', '1');
@@ -736,71 +723,113 @@ const Page = () => {
                 >
               
                   
-                  {/* Filters row */}
-                  <div className="flex flex-wrap items-center gap-1 sm:gap-2 font-technor">
-                  <div className="relative flex flex-wrap items-center gap-1 sm:gap-2 font-technor">
-                  <div className="relative flex-1">
+                  {/* Search and Filters - Responsive Layout */}
+                  <div className="w-full font-technor">
+                    {/* Mobile: 2 rows - Desktop: 1 row with order [search][filter][filter][button] */}
+
+                    {/* Mobile Layout */}
+                    <div className="flex flex-col gap-2 lg:hidden">
+                      {/* Row 1: Search bar (80%) + Search button (20%) */}
+                      <div className="flex items-center gap-2">
+                        <input
+                          value={query}
+                          onChange={(e) => setQuery(e.target.value)}
+                          onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                          placeholder="Search for topics..."
+                          className="flex-1 bg-white/5 border border-white/10 rounded-md px-3 py-1.5 text-xs sm:text-sm text-white placeholder-white/50 focus:outline-none focus:ring-1 focus:ring-[var(--accent)] focus:border-[var(--accent)] transition-all duration-200"
+                        />
+                        <button
+                          onClick={handleSearch}
+                          disabled={isDisabled || isLoading}
+                          aria-disabled={isDisabled || isLoading}
+                          className={`inline-flex items-center justify-center font-bold rounded-md px-3 sm:px-4 py-1.5 text-xs transition-colors duration-200 font-technor whitespace-nowrap
+                            ${isDisabled || isLoading ? "bg-white/30 text-white/80 cursor-not-allowed" : "bg-[var(--accent)] text-white"}`}
+                        >
+                          {isLoading ? (
+                            <svg className="animate-spin h-3 w-3 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                          ) : (
+                            "Search"
+                          )}
+                        </button>
+                      </div>
+
+                      {/* Row 2: Filters */}
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <Dropdown
+                          compact
+                          label="Organism"
+                          value={organism}
+                          onChange={setOrganism}
+                          options={organismOptions}
+                          className="bg-white/5 hover:bg-white/10 border-white/10"
+                          multiple
+                        />
+                        <Dropdown
+                          compact
+                          label="Project type"
+                          value={projectType}
+                          onChange={setProjectType}
+                          options={projectTypeOptions}
+                          className="bg-white/5 hover:bg-white/10 border-white/10"
+                          multiple
+                        />
+                        {showCursor && (
+                          <span aria-hidden className="h-3 sm:h-4 w-1.5 sm:w-2 bg-[var(--accent)] animate-pulse" />
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Desktop Layout: [search][organism][project type][button] */}
+                    <div className="hidden lg:flex lg:flex-row lg:items-center gap-2">
                       <input
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
                         onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                         placeholder="Search for topics..."
-                        className="w-full bg-white/5 border border-white/10 rounded-md px-3 py-1.5 text-xs sm:text-sm text-white placeholder-white/50 focus:outline-none focus:ring-1 focus:ring-[var(--accent)] focus:border-[var(--accent)] transition-all duration-200"
+                        className="bg-white/5 border border-white/10 rounded-md px-3 py-1.5 text-xs sm:text-sm text-white placeholder-white/50 focus:outline-none focus:ring-1 focus:ring-[var(--accent)] focus:border-[var(--accent)] transition-all duration-200"
                       />
-                    </div>
-                    <div className="flex items-center gap-1 bg-white/5 rounded-md p-0.5">
+                      <Dropdown
+                        compact
+                        label="Organism"
+                        value={organism}
+                        onChange={setOrganism}
+                        options={organismOptions}
+                        className="bg-white/5 hover:bg-white/10 border-white/10"
+                        multiple
+                      />
+                      <Dropdown
+                        compact
+                        label="Project type"
+                        value={projectType}
+                        onChange={setProjectType}
+                        options={projectTypeOptions}
+                        className="bg-white/5 hover:bg-white/10 border-white/10"
+                        multiple
+                      />
                       <button
-                        onClick={() => setSearchOperator('AND')}
-                        className={`px-2 py-1 text-xs rounded transition-colors ${searchOperator === 'AND' ? 'bg-white/20 text-white' : 'text-white/50 hover:text-white'}`}
+                        onClick={handleSearch}
+                        disabled={isDisabled || isLoading}
+                        aria-disabled={isDisabled || isLoading}
+                        className={`inline-flex items-center justify-center font-bold rounded-md px-3 sm:px-4 py-1.5 text-xs transition-colors duration-200 font-technor whitespace-nowrap
+                          ${isDisabled || isLoading ? "bg-white/30 text-white/80 cursor-not-allowed" : "bg-[var(--accent)] text-white"}`}
                       >
-                        AND
+                        {isLoading ? (
+                          <svg className="animate-spin h-3 w-3 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
+                        ) : (
+                          "Search"
+                        )}
                       </button>
-                      <button
-                        onClick={() => setSearchOperator('OR')}
-                        className={`px-2 py-1 text-xs rounded transition-colors ${searchOperator === 'OR' ? 'bg-white/20 text-white' : 'text-white/50 hover:text-white'}`}
-                      >
-                        OR
-                      </button>
-                    </div>
-                    <button
-                      onClick={handleSearch}
-                      disabled={isDisabled || isLoading}
-                      aria-disabled={isDisabled || isLoading}
-                      className={`inline-flex items-center justify-center font-bold rounded-md px-4 py-1.5 text-xs transition-colors duration-200 font-technor whitespace-nowrap
-                        ${isDisabled || isLoading ? "bg-white/30 text-white/80 cursor-not-allowed" : "bg-[var(--accent)] text-white"}`}
-                    >
-                      {isLoading ? (
-                        <svg className="animate-spin -ml-1 mr-1 h-3 w-3 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                      ) : (
-                        "Search:"
+                      {showCursor && (
+                        <span aria-hidden className="h-3 sm:h-4 w-1.5 sm:w-2 bg-[var(--accent)] animate-pulse" />
                       )}
-                    </button>
-                    <Dropdown 
-                      compact 
-                      label="Organism" 
-                      value={organism} 
-                      onChange={handleOrganismChange} 
-                      options={organismOptions}
-                      className="bg-white/5 hover:bg-white/10 border-white/10"
-                      multiple
-                    />
-                    <Dropdown 
-                      compact 
-                      label="Project type" 
-                      value={projectType} 
-                      onChange={setProjectType} 
-                      options={projectTypeOptions}
-                      className="bg-white/5 hover:bg-white/10 border-white/10"
-                      multiple
-                    />
-                    {showCursor && (
-                      <span aria-hidden className="h-3 sm:h-4 w-1.5 sm:w-2 bg-[var(--accent)] animate-pulse" />
-                    )}
+                    </div>
                   </div>
-                </div>
 
                 </div>
 
