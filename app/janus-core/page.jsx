@@ -283,7 +283,7 @@ const Page = () => {
   const holoRef = useRef(null);
 
   const buildApiUrl = () => {
-    const baseUrl = 'https://janus-api-fjbpc9dqbcbbaqfq.eastus-01.azurewebsites.net/studies';
+    const baseUrl = 'https://api-janus-hdfgcgh6fgc8h5ee.eastus-01.azurewebsites.net/studies';
     const params = new URLSearchParams();
 
     // Add organism filter if selected
